@@ -1,0 +1,17 @@
+{
+  "name": "trending-post-function",
+  "version": "1.0.0",
+  "description": "Google Cloud Function to generate a trending post for Orca liquidity pools",
+  "main": "index.js",
+  "scripts": {
+    "start": "functions-framework --target=trendingPost"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.5.1",
+    "@google/genai": "^0.14.1",
+    "twitter-api-v2": "^1.23.2"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

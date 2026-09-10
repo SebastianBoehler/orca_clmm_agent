@@ -1,0 +1,24 @@
+# Example Codex config for the trading runtime.
+#
+# This enables Codex's native web search. The domain list applies only to the
+# native web_search tool's result set; it is not a container firewall and does
+# not restrict shell commands, SDK HTTP calls, RPC calls, npm, curl, or fetch.
+
+web_search = "live"
+
+[tools.web_search]
+context_size = "medium"
+allowed_domains = [
+  "developers.openai.com",
+  "docs.orca.so",
+  "docs.li.fi",
+  "developers.jup.ag",
+  "docs.drift.trade",
+  "kamino.com",
+  "docs.meteora.ag",
+  "docs.raydium.io",
+  "docs.marginfi.com",
+  "solana.com",
+  "github.com",
+  "www.npmjs.com",
+]

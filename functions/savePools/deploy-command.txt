@@ -1,0 +1,14 @@
+gcloud functions deploy savePools \
+  --gen2 \
+  --runtime=nodejs22 \
+  --region=us-central1 \
+  --source=. \
+  --entry-point=savePools \
+  --trigger-http \
+  --allow-unauthenticated \
+  --env-vars-file=.env.yaml \
+  --memory=1024MB \
+  --timeout=420s \
+  --min-instances=0 \
+  --max-instances=1 \
+  --project=orca-clmm-agent

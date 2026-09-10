@@ -1,0 +1,13 @@
+# Example only. Create the active weekly heartbeat through Codex automation
+# tooling so it remains attached to the intended task.
+
+version = 1
+id = "portfolio-advisor"
+kind = "heartbeat"
+name = "Long-term portfolio advisor"
+prompt = "See prompt.md in this directory."
+status = "PAUSED"
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9;BYMINUTE=0"
+target_thread_id = "REPLACE_WITH_THREAD_ID"
+created_at = 0
+updated_at = 0

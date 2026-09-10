@@ -1,0 +1,6 @@
+services:
+  codex-agent:
+    restart: unless-stopped
+    command:
+      - sh
+      - /workspace/agent-runtime/continuous-run.sh

@@ -1,0 +1,80 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/observer.py\" --event SessionStart",
+            "timeout": 10,
+            "statusMessage": "Recording Codex session start"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/observer.py\" --event UserPromptSubmit",
+            "timeout": 10,
+            "statusMessage": "Recording user prompt metadata"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/observer.py\" --event PreToolUse",
+            "timeout": 10,
+            "statusMessage": "Recording tool request"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/observer.py\" --event PostToolUse",
+            "timeout": 10,
+            "statusMessage": "Recording tool result"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/observer.py\" --event PermissionRequest",
+            "timeout": 10,
+            "statusMessage": "Recording permission request"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/observer.py\" --event Stop",
+            "timeout": 10,
+            "statusMessage": "Recording turn stop"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "wallets": [
+    {
+      "label": "Long-term Solana wallet",
+      "address": "REPLACE_WITH_SOLANA_ADDRESS",
+      "ledgerRequired": true
+    }
+  ]
+}

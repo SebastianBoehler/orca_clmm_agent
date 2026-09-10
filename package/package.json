@@ -1,0 +1,81 @@
+{
+  "name": "orca-clmm-agent",
+  "version": "1.4.5",
+  "description": "TypeScript helpers for reading, analyzing, opening, and closing Orca Whirlpool CLMM positions on Solana.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node examples/loadPositions.ts",
+    "open": "ts-node examples/openPosition.ts",
+    "balance": "ts-node examples/fetchTokensWithPrices.ts",
+    "server": "ts-node examples/server.ts",
+    "test": "npm run test:unit",
+    "test:unit": "jest",
+    "test:integration": "jest --config jest.integration.config.js --runInBand",
+    "example:test": "ts-node examples/test.ts",
+    "getLiquidityInTicks": "ts-node examples/getLiquidityInTicks.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "orca",
+    "solana",
+    "defi",
+    "whirlpools",
+    "strategy",
+    "management",
+    "sdk",
+    "clmm",
+    "liquidity"
+  ],
+  "author": "Sebastian Boehler",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SebastianBoehler/orca_clmm_agent.git",
+    "directory": "package"
+  },
+  "bugs": {
+    "url": "https://github.com/SebastianBoehler/orca_clmm_agent/issues"
+  },
+  "homepage": "https://github.com/SebastianBoehler/orca_clmm_agent#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@lifi/sdk": "^3.13.2",
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.4.1",
+    "@orca-so/whirlpools": "^8.0.0",
+    "@orca-so/whirlpools-core": "^3.1.0",
+    "@pythnetwork/hermes-client": "^2.0.0",
+    "@solana-program/compute-budget": "^0.11.0",
+    "@solana-program/token-2022": "^0.6.1",
+    "@solana/kit": "^5.5.1",
+    "@solana/spl-token": "^0.4.14",
+    "axios": "^1.16.1",
+    "bignumber.js": "^9.3.1",
+    "bs58": "^6.0.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "fs": "^0.0.1-security",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^24.10.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}

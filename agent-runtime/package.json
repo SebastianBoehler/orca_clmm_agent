@@ -1,0 +1,42 @@
+{
+  "name": "orca-clmm-agent-runtime",
+  "private": true,
+  "description": "Optional Codex CLI runtime image with Solana and trading SDKs preinstalled.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --project tsconfig.json"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@drift-labs/sdk": "^2.155.0",
+    "@jup-ag/cli": "^0.10.0",
+    "@jup-ag/lend": "^0.1.9",
+    "@jup-ag/lend-read": "^0.0.12",
+    "@kamino-finance/farms-sdk": "3.2.24",
+    "@kamino-finance/klend-sdk": "^7.3.22",
+    "@lifi/sdk": "^3.13.2",
+    "@meteora-ag/dlmm": "^1.9.10",
+    "@mrgnlabs/marginfi-client-v2": "^6.4.1",
+    "@orca-so/whirlpools": "^8.0.0",
+    "@orca-so/whirlpools-core": "^3.1.0",
+    "@raydium-io/raydium-sdk-v2": "^0.2.47-alpha",
+    "@solana/kit": "^5.5.1",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "axios": "^1.16.1",
+    "bn.js": "^5.2.3",
+    "bs58": "^6.0.0",
+    "ccxt": "^4.5.20",
+    "decimal.js": "^10.6.0",
+    "dotenv": "^17.2.3",
+    "orca-clmm-agent": "file:../package",
+    "permissionless": "^0.3.5",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "viem": "^2.50.4"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.2.0",
+    "@types/node": "^24.10.0"
+  }
+}

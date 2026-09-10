@@ -1,0 +1,17 @@
+{
+  "name": "delete-old-orca-data-function",
+  "version": "1.0.0",
+  "description": "Google Cloud Function to delete old price and pool data from Supabase",
+  "main": "index.js",
+  "scripts": {
+    "start": "functions-framework --target=deleteOldData"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^4.0.0",
+    "@supabase/supabase-js": "^2.49.5",
+    "date-fns": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

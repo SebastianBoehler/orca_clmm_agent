@@ -1,0 +1,66 @@
+# Example only. Copy to:
+# ~/.codex/automations/dev-wallet-manager/automation.toml
+# after filling target_thread_id and reviewing the private strategy.
+
+version = 1
+id = "dev-wallet-manager"
+kind = "heartbeat"
+name = "Dev wallet position manager"
+prompt = """
+Continue managing the Solana development wallet using the Orca CLMM agent runtime.
+
+Treat this as a live-money dev-wallet workflow. The objective is to preserve
+capital first and only take small, bounded actions when the private strategy
+file gives clear permission and the expected edge is concrete.
+
+Working directory:
+/absolute/path/to/orca_clmm_agent
+
+Required context to read before deciding:
+- AGENTS.md
+- agent-runtime/README.md
+- docs/trading-agent-runbook.md
+- ${AGENT_STRATEGY_PATH:-/workspace/.agent-actions/strategy.md}
+- recent ${AGENT_ACTION_LOG_DIR:-/workspace/.agent-actions}/*.md logs
+
+Use the Docker runtime for wallet-aware work:
+docker compose -f docker-compose.codex-agent.yml run --rm --no-deps codex-agent \
+  codex exec --cd /workspace --dangerously-bypass-approvals-and-sandbox -
+
+On every heartbeat:
+1. Inspect wallet balances and recent wallet history.
+2. Inspect current Orca positions, protocol deposits, obligations, and readiness
+   for the allowed protocols in the strategy file.
+3. Decide whether action is justified. Prefer no action when evidence is weak,
+   the strategy is ambiguous, RPC is degraded, or the wallet state cannot be
+   fully reconstructed.
+4. If action is justified, build the smallest bounded transaction that satisfies
+   the strategy and all wallet limits.
+5. Simulate before submission.
+6. Before any live transaction, append a markdown decision record under
+   $AGENT_ACTION_LOG_DIR with candidate actions, chosen action, rationale,
+   quote, simulation, and policy checks.
+7. Submit only if every configured policy check passes.
+8. After finalization or failure, append signature/status, wallet-history
+   cross-check, and balance or position deltas to the same action log.
+
+Pause and report instead of trading if:
+- the strategy file is missing, stale, or ambiguous
+- any configured wallet or protocol limit would be exceeded
+- simulation fails
+- RPC returns repeated rate limits or inconsistent state
+- wallet-history reconstruction fails for recent live actions
+- expected and observed balance deltas differ materially
+- protocol account state cannot be interpreted
+
+Report only material findings:
+- no-action decision with reason
+- submitted transaction signatures and action-log path
+- pause reason requiring user input
+- strategy or safety issue
+"""
+status = "PAUSED"
+rrule = "FREQ=MINUTELY;INTERVAL=30"
+target_thread_id = "REPLACE_WITH_THREAD_ID"
+created_at = 0
+updated_at = 0

@@ -1,0 +1,23 @@
+services:
+  codex-agent:
+    build:
+      context: .
+      dockerfile: agent-runtime/Dockerfile
+    environment:
+      CODEX_HOME: /auth/codex
+      AGENT_ACTION_LOG_DIR: /workspace/.agent-actions
+      AGENT_STRATEGY_PATH: /workspace/.agent-actions/strategy.md
+      PATH: /opt/npm-global/bin:/opt/trading-tools/node_modules/.bin:/usr/local/bin:/usr/bin:/bin
+      RPC_URL: ${RPC_URL:-}
+      TRADING_EXECUTOR_URL: ${TRADING_EXECUTOR_URL:-}
+      EXECUTE_LIVE: ${EXECUTE_LIVE:-}
+    volumes:
+      - codex-auth:/auth/codex
+      - .:/workspace
+      - ./.agent-actions:/workspace/.agent-actions
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+
+volumes:
+  codex-auth:

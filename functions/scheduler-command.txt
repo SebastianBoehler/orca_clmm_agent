@@ -1,0 +1,7 @@
+gcloud scheduler jobs create http fetch-orca-pools-hourly \
+  --schedule="0 * * * *" \
+  --uri="FUNCTION_URL_HERE" \
+  --http-method=GET \
+  --time-zone="UTC" \
+  --attempt-deadline=180s \
+  --description="Fetches Orca pools every hour and stores them in MongoDB"

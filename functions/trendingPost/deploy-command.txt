@@ -1,0 +1,14 @@
+gcloud functions deploy trendingPost \
+  --gen2 \
+  --runtime=nodejs22 \
+  --region=us-central1 \
+  --source=. \
+  --entry-point=trendingPost \
+  --trigger-http \
+  --allow-unauthenticated \
+  --env-vars-file=.env.yaml \
+  --memory=512MB \
+  --timeout=60s \
+  --min-instances=0 \
+  --max-instances=1 \
+  --project=orca-clmm-agent

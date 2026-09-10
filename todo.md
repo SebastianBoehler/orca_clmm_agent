@@ -1,0 +1,21 @@
+# Orca CLMM Agent Todo List
+
+- [ ] Create method/endpoint to get reranges happened in the last 24h with potential reranges
+  - [ ] How often price left range
+  - [ ] Avg time stayed in range
+- [*] Add retry mechanism for swapAssets
+- [ ] Add current projected yield to detailed position
+- [*] Make sure we don't pay unnecessary rent for tick arrays
+  - [*] This price range requires the creation of new tick arrays, each of which requires a one-time fee of 0.0704 SOL ($10.30) in rent.
+- [ ] LIFI round routes always find next route to any token with positive price impact. Reroute to USDC just needs less price impact than accumulated, join in one transaction
+- [x] Update sql query to calculate volatlity after limit of pools
+- [x] Open not at 50/50 but at 20/80 with more upside https://youtu.be/cqbuMlms86c?si=IqN2oFaAl52GW75v
+- [x] Concatinate harvest and close position instructions into one tx
+- [ ] Include swapping back to base token in closePositionGracefully
+- [x] Creat an dummy export to test local package link, link works but setDefaultFunder not with linked
+- [x] Compare quotes sdk to jupiter site
+- [x] Close ATA that may be created during swap, fee array to get rent back
+- [ ] Support for lifi api key
+- [ ] Stats table in supabase
+  - [ ] exp yield for all timeframes
+- [ ] Handle if init cost is too high since already swapped into pair

@@ -1,0 +1,1119 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚡ Low Latency Transaction Send &mdash; Jito Labs Documentation - High Performance Solana Infrastructure</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  
+    <link rel="shortcut icon" href="../_static/Jitolabs_Logo_White.png"/>
+    <link rel="canonical" href="https://docs.jito.wtf/lowlatencytxnsend/" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f9d24b49"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Jito Labs Documentation - High Performance Solana Infrastructure"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="➤ Low Latency Block Updates (Shredstream)" href="../lowlatencytxnfeed/" />
+    <link rel="prev" title="What is Jito?" href="../" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="jito-docs" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/lowlatencytxnsend/" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #0a0a0a" >
+
+          
+          
+          <a href="../">
+            
+              <img src="../_static/Jitolabs_Logo_White.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">⚡ Low Latency Transaction Send</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-overview">System Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-does-the-system-work">🌐 How does the system work?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-are-bundles">💼 What are bundles?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-do-bundles-work">📬 How do Bundles work?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-the-auction">⚖️ What is the auction?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#transactions-api-v1-transactions">📨 Transactions(<code class="docutils literal notranslate"><span class="pre">/api/v1/transactions</span></code>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sendtransaction">sendTransaction</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#request">Request</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#request-example-base64">Request Example base64</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#request-example-base58">Request Example base58</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#response">Response</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#response-example">Response Example</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#json-rpc-authentication-uuid">JSON-RPC Authentication (UUID):</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bundles-api-v1-bundles">💼 Bundles (<code class="docutils literal notranslate"><span class="pre">/api/v1/bundles</span></code>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sendbundle">sendBundle</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id1">Request</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id2">Request Example base64</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id3">Request Example base58</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id4">Response</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id5">Response Example</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#getbundlestatuses">getBundleStatuses</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id6">Request</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#request-example">Request Example</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id7">Response</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#object-fields">Object Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#id8">Response Example</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#gettipaccounts">getTipAccounts</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id9">Request</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id10">Request Example</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id11">Response</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#response-example-tips">Response Example</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#getinflightbundlestatuses">getInflightBundleStatuses</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id13">Request</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id14">Request Example</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id15">Response</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id16">Object Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#id17">Response Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-endpoints-supported-by-these-libraries">Key Endpoints Supported by These Libraries:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tip-amount">🪙 Tip Amount</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id19">sendTransaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id20">sendBundle</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#get-tip-information">💸 Get Tip Information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rest-api-endpoint-showing-most-recent-tip-amounts">REST API endpoint showing most recent tip amounts:<br></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#websocket-showing-tip-amounts">WebSocket showing tip amounts:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tip-dashboard">Tip Dashboard</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rate-limits">Rate Limits</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-limits">Default Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rate-limit-operation">Rate Limit Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exceeding-limits">Exceeding Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#authorization-issues">Authorization Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rate-limits-form">Rate Limits Form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#priority-fee">Priority Fee</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">Tip Amount</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bundle-landing">Bundle Landing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#failed-transactions">Failed Transactions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uncled-blocks">Uncled Blocks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mitigations">Mitigations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../lowlatencytxnfeed/">➤ Low Latency Block Updates (ShredStream)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../lowlatencytxnfeed/#shreds">Shreds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lowlatencytxnfeed/#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lowlatencytxnfeed/#jito-shredstream-proxy">Jito ShredStream Proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lowlatencytxnfeed/#preparation">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lowlatencytxnfeed/#running-via-docker">Running via Docker</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../lowlatencytxnfeed/#host-networking-recommended">🐳 Host Networking (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lowlatencytxnfeed/#bridge-networking">🚝 Bridge Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lowlatencytxnfeed/#running-natively">🦾 Running Natively</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lowlatencytxnfeed/#decoding-shreds">Decoding Shreds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lowlatencytxnfeed/#firewall-configuration">📛 Firewall Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../lowlatencytxnfeed/#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #0a0a0a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Jito Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">⚡ Low Latency Transaction Send</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="low-latency-transaction-send">
+<h1>⚡ Low Latency Transaction Send<a class="headerlink" href="#low-latency-transaction-send" title="Link to this heading"></a></h1>
+<p>Jito provides Solana MEV users with superior transaction execution through fast landing, MEV protection, and revert protection, available for both single transactions and multiple transactions(bundles) via gRPC and JSON-RPC services, ensuring optimal performance in the highly competitive Solana ecosystem.”</p>
+<figure class="align-default">
+<img alt="../_images/matrixtxnsv4.png" class="diagram" src="../_images/matrixtxnsv4.png" />
+</figure>
+<hr class="docutils" />
+<section id="system-overview">
+<h2>System Overview<a class="headerlink" href="#system-overview" title="Link to this heading"></a></h2>
+<figure class="align-default">
+<img alt="../_images/systemdiagramv2.png" class="diagram" src="../_images/systemdiagramv2.png" />
+</figure>
+<section id="how-does-the-system-work">
+<h3>🌐 How does the system work?<a class="headerlink" href="#how-does-the-system-work" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Validators run a modified Agave validator client called Jito-Solana that enables higher value capture for them and their stakers</p>
+<ul>
+<li><p>The validator then connects to the Jito Block-Engine and Jito-Relayer</p></li>
+<li><p>The Block-Engine submits profitable bundles to the validator</p></li>
+<li><p>The Relayer acts as a proxy to filter and verify transactions for validators</p></li>
+</ul>
+</li>
+<li><p>Searchers, dApps, Telegram bots and others connect to the Block-Engine and submit transactions &amp; bundles.</p>
+<ul>
+<li><p>Submissions can be over gRPC or JSON-RPC</p></li>
+<li><p>Bundles have tips bids associated with them; these bids are then redistributed to the validators and their stakers</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="what-are-bundles">
+<h3>💼 What are bundles?<a class="headerlink" href="#what-are-bundles" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Bundles are groups of transactions (max 5) bundled together</p></li>
+<li><p>The transactions are executed sequentially and atomically meaning all-or-nothing</p></li>
+<li><p>Bundles enable complex MEV strategies like atomic arbitrage</p></li>
+<li><p>Bundles compete against other bundles on tips to the validator</p></li>
+</ul>
+</section>
+<section id="how-do-bundles-work">
+<h3>📬 How do Bundles work?<a class="headerlink" href="#how-do-bundles-work" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Traders submit bundle to block engines</p></li>
+<li><p>Block engines simulate bundles to determine the most profitable combinations</p></li>
+<li><p>Winning bundles are sent to validators to include in blocks</p></li>
+<li><p>Validators execute bundles atomically and collect tips</p></li>
+<li><p>MEV rewards from bundles are distributed to validators and stakers</p></li>
+</ul>
+</section>
+<section id="what-is-the-auction">
+<h3>⚖️ What is the auction?<a class="headerlink" href="#what-is-the-auction" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Bundles submitted by traders are put through a priority auction</p>
+<ul>
+<li><p>An auction is needed since opportunities and blockspace are scarce</p></li>
+<li><p>The auction creates a stream of bundles that maximizes tips in a block.
+Parallelism in locking patterns is leveraged where possible to allow for local state auctions.</p></li>
+</ul>
+</li>
+<li><p>Parallel auctions are run at 200ms ticks</p>
+<ul>
+<li><p>Bundles with intersecting locking patterns on a particular account [(w, w) or (r, w) or (w, r)] are run in a single auction.</p></li>
+<li><p>Bundles that do not touch the same accounts are run in separate auctions, as well as bundles that have non-intersecting locking patterns (r, r) on accounts.</p></li>
+<li><p>Bundle orderings within a single auction are prioritized in the auction based on requested tip/cus-requested efficiency.</p></li>
+</ul>
+</li>
+<li><p>Jito submits the highest paying combination of bundles to the validator up to some CU limit</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>You can send JSON-RPC requests to any Block Engine using the following URLs. To route to a specific region, specify the desired region:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Location</p></th>
+<th class="head"><p>Block Engine URL</p></th>
+<th class="head"><p>Shred Receiver</p></th>
+<th class="head"><p>Relayer URL</p></th>
+<th class="head"><p>NTP Server</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>🌍 🌎 🌏 <strong>Mainnet</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>🇳🇱 <strong>Amsterdam</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://amsterdam.mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">74.118.140.240:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://amsterdam.mainnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.amsterdam.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>🇩🇪 <strong>Frankfurt</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://frankfurt.mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">64.130.50.14:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://frankfurt.mainnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.frankfurt.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>🇬🇧 <strong>London</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://london.mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">142.91.127.175:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://london.mainnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.london.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>🇺🇸 <strong>New York</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://ny.mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">141.98.216.96:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://ny.mainnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.dallas.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>🇯🇵 <strong>Tokyo</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://tokyo.mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">202.8.9.160:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://tokyo.mainnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.tokyo.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>🇺🇸 <strong>Salt Lake City</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://slc.mainnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">64.130.53.8:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://slc.mainnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.slc.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>🌍 🌎 🌏 <strong>Testnet</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://testnet.block-engine.jito.wtf</span></code></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>🇺🇸 <strong>Dallas</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://dallas.testnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">141.98.218.45:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://dallas.testnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.dallas.jito.wtf</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>🇺🇸 <strong>New York</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://ny.testnet.block-engine.jito.wtf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">141.98.216.132:1002</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://ny.testnet.relayer.jito.wtf:8100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ntp.dallas.jito.wtf</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="transactions-api-v1-transactions">
+<h3>📨 Transactions(<code class="docutils literal notranslate"><span class="pre">/api/v1/transactions</span></code>)<a class="headerlink" href="#transactions-api-v1-transactions" title="Link to this heading"></a></h3>
+<p>For single transaction-related methods, use the URL path <code class="docutils literal notranslate"><span class="pre">/api/v1/transactions</span></code></p>
+<p>For example: <code class="docutils literal notranslate"><span class="pre">https://mainnet.block-engine.jito.wtf/api/v1/transactions</span></code></p>
+<section id="sendtransaction">
+<h4>sendTransaction<a class="headerlink" href="#sendtransaction" title="Link to this heading"></a></h4>
+<p>This method acts as a direct proxy to the Solana sendTransaction RPC method, but forwards your transaction directly to the validator. By default, it submits the transaction with providing MEV protection.</p>
+<p>Please note that Jito enforces a minimum tip of 1000 lamports for bundles. During high-demand periods, this minimum tip might not be sufficient to successfully navigate the auction, so it’s crucial to set both a priority fee and an additional Jito tip to optimize your transaction’s chances. Please see <a class="reference internal" href="#tip-amount">Tip Amounts</a></p>
+<p>For cost efficiency, you can enable revert protection by setting the query parameter bundleOnly=true. With this setting, the transaction is sent exclusively as a single transaction bundle.</p>
+<p>Additionally, this method always sets skip_preflight=true, which means the transaction won’t be simulated in the RPC before being sent to the leader.</p>
+<section id="request">
+<h5>Request<a class="headerlink" href="#request" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p>string</p></td>
+<td><p><strong>REQUIRED</strong>: First Transaction Signature embedded in the transaction, as base58 (slow, DEPRECATED) or base64 encoded string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">encoding</span></code></p></td>
+<td><p>string</p></td>
+<td><p><strong>OPTIONAL</strong>: Encoding used for the transaction data. Values: <code class="docutils literal notranslate"><span class="pre">base58</span></code> (slow, DEPRECATED) or <code class="docutils literal notranslate"><span class="pre">base64</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">base58</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="request-example-base64">
+<h5>Request Example base64<a class="headerlink" href="#request-example-base64" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf/api/v1/transactions<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;id&quot;: 1,</span>
+<span class="s1">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">  &quot;method&quot;: &quot;sendTransaction&quot;,</span>
+<span class="s1">  &quot;params&quot;: [</span>
+<span class="s1">    &quot;AVXo5X7UNzpuOmYzkZ+fqHDGiRLTSMlWlUCcZKzEV5CIKlrdvZa3/2GrJJfPrXgZqJbYDaGiOnP99tI/sRJfiwwBAAEDRQ/n5E5CLbMbHanUG3+iVvBAWZu0WFM6NoB5xfybQ7kNwwgfIhv6odn2qTUu/gOisDtaeCW1qlwW/gx3ccr/4wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvsInicc+E3IZzLqeA+iM5cn9kSaeFzOuClz1Z2kZQy0BAgIAAQwCAAAAAPIFKgEAAAA=&quot;,</span>
+<span class="s1">    {</span>
+<span class="s1">      &quot;encoding&quot;: &quot;base64&quot;</span>
+<span class="s1">    }</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="request-example-base58">
+<h5>Request Example base58<a class="headerlink" href="#request-example-base58" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf/api/v1/transactions<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">  &quot;id&quot;: 1,</span>
+<span class="s1">  &quot;method&quot;: &quot;sendTransaction&quot;,</span>
+<span class="s1">  &quot;params&quot;: [</span>
+<span class="s1">    &quot;4hXTCkRzt9WyecNzV1XPgCDfGAZzQKNxLXgynz5QDuWWPSAZBZSHptvWRL3BjCvzUXRdKvHL2b7yGrRQcWyaqsaBCncVG7BFggS8w9snUts67BSh3EqKpXLUm5UMHfD7ZBe9GhARjbNQMLJ1QD3Spr6oMTBU6EhdB4RD8CP2xUxr2u3d6fos36PD98XS6oX8TQjLpsMwncs5DAMiD4nNnR8NBfyghGCWvCVifVwvA8B8TJxE1aiyiv2L429BCWfyzAme5sZW8rDb14NeCQHhZbtNqfXhcp2tAnaAT&quot;</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="response">
+<h5>Response<a class="headerlink" href="#response" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">result</span></code></p></td>
+<td><p>string</p></td>
+<td><p>The result will be the same as described in the <a class="reference external" href="https://solana.com/docs/rpc/http/sendtransaction">Solana RPC documentation</a>. If sending as a bundle was successful, you can get the <code class="docutils literal notranslate"><span class="pre">bundle_id</span></code> from the <code class="docutils literal notranslate"><span class="pre">x-bundle-id</span></code> HTTP header in the response.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="response-example">
+<h5>Response Example<a class="headerlink" href="#response-example" title="Link to this heading"></a></h5>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2id3YC2jK9G5Wo2phDx4gJVAew8DcY5NAojnVuao8rkxwPYPe8cSwE5GzhEgJA2y8fVjDEo6iR6ykBvDxrTQrtpb&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="json-rpc-authentication-uuid">
+<h4>JSON-RPC Authentication (UUID):<a class="headerlink" href="#json-rpc-authentication-uuid" title="Link to this heading"></a></h4>
+<p>Please include the following when authenticating with a URL using a UUID:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Header Field: Include the API key in the x-jito-auth header.
+
+    Example: x-jito-auth: &lt;uuid&gt;
+
+Query Parameter: Include the API key as a query parameter.
+
+    Example: api/v1/bundles?uuid=&lt;uuid&gt;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bundles-api-v1-bundles">
+<h3>💼 Bundles (<code class="docutils literal notranslate"><span class="pre">/api/v1/bundles</span></code>)<a class="headerlink" href="#bundles-api-v1-bundles" title="Link to this heading"></a></h3>
+<p>Bundles are a list of up to 5 transactions that execute sequentially and atomically, ensuring an all-or-nothing outcome. Here’s what that means:</p>
+<ul class="simple">
+<li><p><strong>Sequentially:</strong> Transactions in a bundle are guaranteed to execute in the order they are listed.</p></li>
+<li><p><strong>Atomically:</strong> Bundles execute within the same slot(e.g. a bundle cannot cross slot boundaries). If the entire bundle executes successfully, all transactions are committed to the chain.</p></li>
+<li><p><strong>All-or-Nothing:</strong> Bundles can only contain successful transactions. If any transaction in a bundle fails, none of the transactions in the bundle will be committed to the chain.</p></li>
+</ul>
+<p>This guarantees that all transactions in a bundle are executed in sequence and either all succeed or none are executed.</p>
+<p>For bundle-related methods, use the URL path <code class="docutils literal notranslate"><span class="pre">/api/v1/bundles</span></code>. Refer to the documentation to see the available JSON-RPC endpoints for bundles.</p>
+<section id="sendbundle">
+<h4>sendBundle<a class="headerlink" href="#sendbundle" title="Link to this heading"></a></h4>
+<p>Submits a bundled list of signed transactions to the cluster for processing. The transactions are atomically processed in order, meaning if any transaction fails, the entire bundle is rejected (all or nothing). This method relays the bundle created by clients to the leader without any modifications. If the bundle is set to expire after the next Jito-Solana leader, this method immediately returns a success response with a <code class="docutils literal notranslate"><span class="pre">bundle_id</span></code>, indicating the bundle has been received. This does not guarantee the bundle will be processed or land on-chain. To check the bundle status, use <code class="docutils literal notranslate"><span class="pre">getBundleStatuses</span></code> with the <code class="docutils literal notranslate"><span class="pre">bundle_id</span></code>.</p>
+<p>A tip is necessary for the bundle to be considered. The tip can be any instruction, top-level or CPI, that transfers SOL to one of the 8 tip accounts. Clients should ensure they have sufficient balance and state assertions allowing the tip to go through conditionally, especially if tipping as a separate transaction. If the tip is too low, the bundle might not be selected during the auction. Use <code class="docutils literal notranslate"><span class="pre">getTipAccounts</span></code> to retrieve the tip accounts. Ideally, select one of the accounts at random to reduce contention.</p>
+<section id="id1">
+<h5>Request<a class="headerlink" href="#id1" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head text-left"><p></p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p>array[string]</p></td>
+<td class="text-left"><p></p></td>
+<td><p><strong>REQUIRED</strong>: Fully-signed transactions, as base58 (slow, DEPRECATED) or base64 encoded strings. Maximum of 5 transactions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">encoding</span></code></p></td>
+<td><p>string</p></td>
+<td class="text-left"><p></p></td>
+<td><p><strong>OPTIONAL</strong>: Encoding used for the transaction data. Values: <code class="docutils literal notranslate"><span class="pre">base58</span></code> (slow, DEPRECATED) or <code class="docutils literal notranslate"><span class="pre">base64</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">base58</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h5>Request Example base64<a class="headerlink" href="#id2" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf:443/api/v1/bundles<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">  &quot;id&quot;: 1,</span>
+<span class="s1">  &quot;method&quot;: &quot;sendBundle&quot;,</span>
+<span class="s1">  &quot;params&quot;: [</span>
+<span class="s1">    [</span>
+<span class="s1">      &quot;AbKi19sammgVRlYLdvIwJ8DGEBCk5TmwgRmwWw+IAlkmIqvIXBfY/qYxrFwQGJZq4UvBXDAqmCTkDvQueLsJGAUBAAECZAJMcn3luKBgXdzj8FTKBu8ndFClGLdh/38acclb7JwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM5VmqzBOi86PgXATWyyLk9tLPT8SstEH1LaVXnHY/BoAQECAAAMAgAAAAAAAAAAAAAA&quot;,</span>
+<span class="s1">      &quot;AbJIDFwE1L4b0XraibdKWtKm3gJrGUhrdnfaSJnj9r0QVx3gGjwFB8ZkwWDcg0JXU6BH9ELCuU1uK98Ndud7wwQBAAECZAJMcn3luKBgXdzj8FTKBu8ndFClGLdh/38acclb7JwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM5VmqzBOi86PgXATWyyLk9tLPT8SstEH1LaVXnHY/BoAQECAAAMAgAAAAEAAAAAAAAA&quot;,</span>
+<span class="s1">      &quot;AWfyRMfbDTJWbhCX4I8LGTarxXhQbPXw4qkwEMlNwb6fyjll6oEd0pdChDyjKFhz0zPZh/W8avZ7e3sX0O0OHAYBAAECZAJMcn3luKBgXdzj8FTKBu8ndFClGLdh/38acclb7JwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM5VmqzBOi86PgXATWyyLk9tLPT8SstEH1LaVXnHY/BoAQECAAAMAgAAAAIAAAAAAAAA&quot;,</span>
+<span class="s1">      &quot;AW1qg6ac61EwnsaV05CC1wk84EDUWR75wUzKLRArGy2oA6DFQffpS9mfmxBsYaoJQXZQPkxDYj7H0YdUjcAGuwIBAAECZAJMcn3luKBgXdzj8FTKBu8ndFClGLdh/38acclb7JwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM5VmqzBOi86PgXATWyyLk9tLPT8SstEH1LaVXnHY/BoAQECAAAMAgAAAAMAAAAAAAAA&quot;,</span>
+<span class="s1">      &quot;AfrPPQSnIBDrEXHWUV8l7rMa7Whibfdj69/d12d44PaLxhfQtROXz/x7obKe5M3oJK/fMiMlzoKLU8tno4D4MwYBAAEDZAJMcn3luKBgXdzj8FTKBu8ndFClGLdh/38acclb7Jx4Uhyxec67hYm1VqLV7JTSSYaC/fm7KvWtZOSRzEFT2gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzlWarME6Lzo+BcBNbLIuT20s9PxKy0QfUtpVecdj8GgBAgIAAQwCAAAAAAAAAAAAAAA=&quot;</span>
+<span class="s1">    ],</span>
+<span class="s1">    {</span>
+<span class="s1">      &quot;encoding&quot;: &quot;base64&quot;</span>
+<span class="s1">    }</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h5>Request Example base58<a class="headerlink" href="#id3" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf:443/api/v1/bundles<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{                        </span>
+<span class="s1">  &quot;id&quot;: 1,</span>
+<span class="s1">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">  &quot;method&quot;: &quot;sendBundle&quot;,</span>
+<span class="s1">  &quot;params&quot;: [</span>
+<span class="s1">    [</span>
+<span class="s1">      &quot;AKkzFdN4gPSEKhWoavYAEg7uGiKmuAwsMEVJ5uM8jxP27c86GERzygxbzGMWDQiPhKKmkwtZh9s8LdeBvuXLY8TEjxtsn7AnZ6JYJP8hsnbNAEprxFVfP4FpVRJM2n35u3DGX4pXsAVQ2ABxGuoRkDQTADCQExcQYf7BzLPFKgyd79MyuHwUBHr3mLbTpLsrRt1Hh5xuuZzuS6dKUSEaH1zWcxNAV57p2yQDnbL21ZQVPijcqgYutCVe7&quot;,</span>
+<span class="s1">      &quot;APtbdutAzvCRteQbcARea4yG88mxABQzzhuyzQYDYtXGjhqdnucwC2VBZhx7ebvnUDsMpU6tBZRzZzwF7C7Qd3GfbgNCgcqoyckRfazUUqWkPHGTtYZsi17tdJAwC2ptHtR7Rt3rnKCBog16tERmu2AJbezFdFnPfDTvH2YTWnzycgkah4u8Y2d5CJZewd8fyQxyWHWARfBmhrxtaC5gALvyYDUKyiehkN2VLNnKH3zwVoBJvRGhe8bPM&quot;,</span>
+<span class="s1">      &quot;DXPV292U8Q3kzS1BVroCWd563WG4yvMCZYcHfbTitkSDEPt49u2ivX2fpYag82MqekNn7E8KD2eM3Uy1whqEU6nNbpMPtkGZn4ukq9arsCdTB5QGR5h1vsWJA7ho8fmzbsrLBDNaV1SeqyeWo85v43YzVyjyv8WDF2ki46Wzvd1BYJ4gu9WJVNryMLknjq747oKsq8xT4tUSDSZNVcfzHN99d3FevzU8FHjyg7paSYdHW8HsDj16Hezzj&quot;,</span>
+<span class="s1">      &quot;HbyLbLGUai4zgdFm1FDq9qXRHjTC4kneK8UsoFDpi447SsJiL7Xr9i4wG6iEzEvGT2MdGXrqzAHHxojQRGKCsbfFNKpQMnZ2BDih9He5XD5ViTQGLQ6fYyF9mCpPkZn91vRAeBbWjPoxdcj5UYjJpKS4zRCfPFnYrRCW2y9k9GdA6N2Rcr9S9kgg96WQoiG4drtoiiYAmx3WqckQs4X3dbe4DV6SAH3ZmZJR8gi87DCSfb8xCerwsXeeT&quot;,</span>
+<span class="s1">      &quot;4kSrVZjKnonsMTFqJwaV7riKfLnxvek5RtF4WuyQGGoUqWVqqLveGjZivVZyn3NGseo6TvFfG1dZPA45V6rjvmKeBuVJdZztaoqifwnYxXH2H6LMMwvz89dHN74kjM5D9Ky7cvNSfEW6uVkiLkXi1aMmSP5gicZf2bWVQk9xA2Ab8WSqaDqEoNEQkTN2ULyxt1N1b9UqqDBQGp4XHrtwnXex6fbWQYkp8ji1gY1NKmz8W7E4KWhCM38ZE21qyzXjivtrny7mK5WbHP2ZM1BPhyNB2qo7fdGYVmhRq&quot;</span>
+<span class="s1">    ]</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h5>Response<a class="headerlink" href="#id4" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">result</span></code></p></td>
+<td><p>string</p></td>
+<td><p>A bundle ID, used to identify the bundle. This is the SHA-256 hash of the bundle’s transaction signatures.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id5">
+<h5>Response Example<a class="headerlink" href="#id5" title="Link to this heading"></a></h5>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2id3YC2jK9G5Wo2phDx4gJVAew8DcY5NAojnVuao8rkxwPYPe8cSwE5GzhEgJA2y8fVjDEo6iR6ykBvDxrTQrtpb&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="getbundlestatuses">
+<h4>getBundleStatuses<a class="headerlink" href="#getbundlestatuses" title="Link to this heading"></a></h4>
+<p>Returns the status of submitted bundle(s). This function operates similarly to the Solana RPC method <code class="docutils literal notranslate"><span class="pre">getSignatureStatuses</span></code>. If a <code class="docutils literal notranslate"><span class="pre">bundle_id</span></code> is not found or has not landed, it returns <code class="docutils literal notranslate"><span class="pre">null</span></code>. If found and processed, it returns context information including the slot at which the request was made and results with the <code class="docutils literal notranslate"><span class="pre">bundle_id(s)</span></code> and the transactions along with their slot and confirmation status.</p>
+<p>We use <code class="docutils literal notranslate"><span class="pre">getSignatureStatuses</span></code> with the default value of <code class="docutils literal notranslate"><span class="pre">searchTransactionHistory</span></code> set to <code class="docutils literal notranslate"><span class="pre">false</span></code> to check transaction statuses on-chain. This means the RPC call will search only its recent history, including all recent slots plus up to <code class="docutils literal notranslate"><span class="pre">MAX_RECENT_BLOCKHASHES</span></code> rooted slots for the transactions. Currently, <code class="docutils literal notranslate"><span class="pre">MAX_RECENT_BLOCKHASHES</span></code> is 300.</p>
+<section id="id6">
+<h5>Request<a class="headerlink" href="#id6" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p>array[string]</p></td>
+<td><p><strong>REQUIRED</strong>: An array of bundle IDs to confirm. Maximum of 5.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="request-example">
+<h5>Request Example<a class="headerlink" href="#request-example" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf/api/v1/getBundleStatuses<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">    &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">    &quot;id&quot;: 1,</span>
+<span class="s1">    &quot;method&quot;: &quot;getBundleStatuses&quot;,</span>
+<span class="s1">    &quot;params&quot;: [</span>
+<span class="s1">      [</span>
+<span class="s1">        &quot;892b79ed49138bfb3aa5441f0df6e06ef34f9ee8f3976c15b323605bae0cf51d&quot;</span>
+<span class="s1">      ]</span>
+<span class="s1">    ]</span>
+<span class="s1">}</span>
+<span class="s1">&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h5>Response<a class="headerlink" href="#id7" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>null</p></td>
+<td><p>If the bundle is not found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">object</span></code></p></td>
+<td><p>object</p></td>
+<td><p>If the bundle is found, an array of objects with the following fields:</p></td>
+</tr>
+</tbody>
+</table>
+<section id="object-fields">
+<h6>Object Fields<a class="headerlink" href="#object-fields" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p><strong>bundle_id</strong>: <code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+<ul>
+<li><p>Bundle ID</p></li>
+</ul>
+</li>
+<li><p><strong>transactions</strong>: <code class="docutils literal notranslate"><span class="pre">array[string]</span></code></p>
+<ul>
+<li><p>A list of base-58 encoded signatures applied by the bundle. The list will not be empty.</p></li>
+</ul>
+</li>
+<li><p><strong>slot</strong>: <code class="docutils literal notranslate"><span class="pre">u64</span></code></p>
+<ul>
+<li><p>The slot this bundle was processed in.</p></li>
+</ul>
+</li>
+<li><p><strong>confirmationStatus</strong>: <code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+<ul>
+<li><p>The bundle transaction’s cluster confirmation status; either <code class="docutils literal notranslate"><span class="pre">processed</span></code>, <code class="docutils literal notranslate"><span class="pre">confirmed</span></code>, or <code class="docutils literal notranslate"><span class="pre">finalized</span></code>. See Commitment for more on optimistic confirmation.</p></li>
+</ul>
+</li>
+<li><p><strong>err</strong>: <code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+<ul>
+<li><p>This will show any retryable or non-retryable error encountered when getting the bundle status. If retryable, please query again.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id8">
+<h5>Response Example<a class="headerlink" href="#id8" title="Link to this heading"></a></h5>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">242806119</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;bundle_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;892b79ed49138bfb3aa5441f0df6e06ef34f9ee8f3976c15b323605bae0cf51d&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;transactions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="s2">&quot;3bC2M9fiACSjkTXZDgeNAuQ4ScTsdKGwR42ytFdhUvikqTmBheUxfsR1fDVsM5ADCMMspuwGkdm1uKbU246x5aE3&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="s2">&quot;8t9hKYEYNbLvNqiSzP96S13XF1C2f1ro271Kdf7bkZ6EpjPLuDff1ywRy4gfaGSTubsM2FeYGDoT64ZwPm1cQUt&quot;</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">242804011</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;confirmation_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;finalized&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;err&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;Ok&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gettipaccounts">
+<h4>getTipAccounts<a class="headerlink" href="#gettipaccounts" title="Link to this heading"></a></h4>
+<p>Retrieves the tip accounts designated for tip payments for bundles. The tip accounts have remained constant and can also be found <a class="reference internal" href="#response-example-tips">here</a>.</p>
+<section id="id9">
+<h5>Request<a class="headerlink" href="#id9" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>None</p></td>
+<td><p>None</p></td>
+<td><p>None</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id10">
+<h5>Request Example<a class="headerlink" href="#id10" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf/api/v1/bundles<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">    &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">    &quot;id&quot;: 1,</span>
+<span class="s1">    &quot;method&quot;: &quot;getTipAccounts&quot;,</span>
+<span class="s1">    &quot;params&quot;: []</span>
+<span class="s1">}</span>
+<span class="s1">&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h5>Response<a class="headerlink" href="#id11" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">result</span></code></p></td>
+<td><p>array</p></td>
+<td><p>Tip accounts as a list of strings.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="response-example-tips">
+<span id="id12"></span><h5>Response Example<a class="headerlink" href="#response-example-tips" title="Link to this heading"></a></h5>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w">    </span>
+<span class="w">    </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="getinflightbundlestatuses">
+<h4>getInflightBundleStatuses<a class="headerlink" href="#getinflightbundlestatuses" title="Link to this heading"></a></h4>
+<p>Returns the status of submitted bundles within the last five minutes, allowing up to five bundle IDs per request.</p>
+<ul class="simple">
+<li><p><strong>Failed</strong>: Indicates that all regions have marked the bundle as failed, and it has not been forwarded.</p></li>
+<li><p><strong>Pending</strong>: Indicates the bundle has not failed, landed, or been deemed invalid.</p></li>
+<li><p><strong>Landed</strong>: Signifies the bundle has successfully landed on-chain, verified through RPC or the <code class="docutils literal notranslate"><span class="pre">bundles_landed</span></code> table.</p></li>
+<li><p><strong>Invalid</strong>: Means the bundle is no longer in the system.</p></li>
+</ul>
+<section id="id13">
+<h5>Request<a class="headerlink" href="#id13" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p>array[string]</p></td>
+<td><p><strong>REQUIRED</strong>: An array of bundle IDs to confirm (up to a maximum of 5).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id14">
+<h5>Request Example<a class="headerlink" href="#id14" title="Link to this heading"></a></h5>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://mainnet.block-engine.jito.wtf/api/v1/getInflightBundleStatuses<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</span>
+<span class="s1">  &quot;id&quot;: 1,</span>
+<span class="s1">  &quot;method&quot;: &quot;getInflightBundleStatuses&quot;,</span>
+<span class="s1">  &quot;params&quot;: [</span>
+<span class="s1">    [</span>
+<span class="s1">      &quot;b31e5fae4923f345218403ac1ab242b46a72d4f2a38d131f474255ae88f1ec9a&quot;,</span>
+<span class="s1">      &quot;e3c4d7933cf3210489b17307a14afbab2e4ae3c67c9e7157156f191f047aa6e8&quot;,</span>
+<span class="s1">      &quot;a7abecabd9a165bc73fd92c809da4dc25474e1227e61339f02b35ce91c9965e2&quot;,</span>
+<span class="s1">      &quot;e3934d2f81edbc161c2b8bb352523cc5f74d49e8d4db81b222c553de60a66514&quot;,</span>
+<span class="s1">      &quot;2cd515429ae99487dfac24b170248f6929e4fd849aa7957cccc1daf75f666b54&quot; </span>
+<span class="s1">    ]</span>
+<span class="s1">  ]</span>
+<span class="s1">}</span>
+<span class="s1">&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h5>Response<a class="headerlink" href="#id15" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>null</p></td>
+<td><p>If the bundle(s) is not found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">object</span></code></p></td>
+<td><p>object</p></td>
+<td><p>If the bundle is found, an array of objects with the following fields:</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id16">
+<h6>Object Fields<a class="headerlink" href="#id16" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p><strong>bundle_id</strong>: <code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+<ul>
+<li><p>Bundle ID</p></li>
+</ul>
+</li>
+<li><p><strong>status</strong>: <code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Invalid</span></code>: Bundle ID not in our system (5 minute look back).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Pending</span></code>: Not failed, not landed, not invalid.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Failed</span></code>: All regions that have received the bundle have marked it as failed and it hasn’t been forwarded.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Landed</span></code>: Landed on-chain (determined using RPC or <code class="docutils literal notranslate"><span class="pre">bundles_landed</span></code> table).</p></li>
+</ul>
+</li>
+<li><p><strong>landed_slot</strong>: <code class="docutils literal notranslate"><span class="pre">u64</span></code></p>
+<ul>
+<li><p>The slot this bundle landed in, otherwise <code class="docutils literal notranslate"><span class="pre">null</span></code> if it is <code class="docutils literal notranslate"><span class="pre">Invalid</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id17">
+<h5>Response Example<a class="headerlink" href="#id17" title="Link to this heading"></a></h5>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">280999028</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;bundle_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b31e5fae4923f345218403ac1ab242b46a72d4f2a38d131f474255ae88f1ec9a&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;landed_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;bundle_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;e3c4d7933cf3210489b17307a14afbab2e4ae3c67c9e7157156f191f047aa6e8&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;landed_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;bundle_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a7abecabd9a165bc73fd92c809da4dc25474e1227e61339f02b35ce91c9965e2&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;landed_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;bundle_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;e3934d2f81edbc161c2b8bb352523cc5f74d49e8d4db81b222c553de60a66514&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;landed_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;bundle_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2cd515429ae99487dfac24b170248f6929e4fd849aa7957cccc1daf75f666b54&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;landed_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>Welcome to the Jito MEV ecosystem! If you’re looking to integrate Jito’s advanced MEV solutions into your projects, we have a suite of developer tools designed to make your journey seamless, no matter your preferred language.</p>
+<div class="language-card">
+    <div class="language-icon">
+        <i class="fab fa-python"></i>
+    </div>
+    <div class="language-content">
+        <h3>Python Developers</h3>
+        <p>The <a href="https://github.com/jito-labs/jito-py-rpc">Jito Py JSON-RPC</a> library provides a robust SDK for interacting with Jito's Block Engine, allowing you to send transactions, bundles, and more directly from your Python applications.</p>
+    </div>
+</div>
+<div class="language-card">
+    <div class="language-icon">
+        <i class="fab fa-js"></i>
+    </div>
+    <div class="language-content">
+        <h3>JavaScript/TypeScript Developers</h3>
+        <p>The <a href="https://github.com/jito-labs/jito-js-rpc">Jito JS JSON-RPC</a> library offers similar capabilities tailored for Node.js and browser environments, optimized for efficient MEV interactions.</p>
+    </div>
+</div>
+<div class="language-card">
+    <div class="language-icon">
+        <i class="fab fa-rust" style="color: #14F195;"></i>
+    </div>
+    <div class="language-content">
+        <h3>Rust Developers</h3>
+        <p>Explore the <a href="https://github.com/jito-labs/jito-rust-rpc">Jito Rust JSON-RPC</a>, a performant SDK designed to leverage the power of Rust for interacting with Jito's infrastructure on Solana.</p>
+    </div>
+</div>
+<div class="language-card">
+    <div class="language-icon">
+        <i class="fab fa-golang"></i>
+    </div>
+    <div class="language-content">
+        <h3>Go Developers</h3>
+        <p>The <a href="https://github.com/jito-labs/jito-go-rpc">Jito Go JSON-RPC</a> library provides a Go-based SDK that brings the same low-latency, high-performance MEV solutions to your Go applications.</p>
+    </div>
+</div>
+<section id="key-endpoints-supported-by-these-libraries">
+<h3>Key Endpoints Supported by These Libraries:<a class="headerlink" href="#key-endpoints-supported-by-these-libraries" title="Link to this heading"></a></h3>
+<p><strong>Bundles</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_inflight_bundle_statuses</span></code>: Retrieve the status of in-flight bundles.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_bundle_statuses</span></code>: Fetch the statuses of submitted bundles.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_tip_accounts</span></code>: Get accounts eligible for tips.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">send_bundle</span></code>: Submit bundles to the Jito Block Engine.</p></li>
+</ul>
+<p><strong>Transactions</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">send_transaction</span></code>: Submit transactions with enhanced priority and speed.</p></li>
+</ul>
+<p>These endpoints are specifically designed to optimize your MEV strategies, offering precise control over bundle and transaction management on Solana. Dive into the repos to get started, explore detailed documentation, and discover how you can integrate these powerful tools into your MEV workflows.</p>
+</section>
+</section>
+<section id="tips">
+<h2>Tips<a class="headerlink" href="#tips" title="Link to this heading"></a></h2>
+<p><strong>Best Practices for Tipping:</strong></p>
+<ol class="arabic simple">
+<li><p>Integrate tip instructions within your main transaction alongside core logic.</p></li>
+<li><p>If transaction space is constrained, implement post-transaction checks or add assertions in a separate tipping transaction to verify expected states.</p></li>
+<li><p>Exercise caution when sending tips as standalone transactions in bundles, as this may increase vulnerability to uncle bandit scenarios.</p></li>
+</ol>
+<blockquote>
+<div><p>⚠️ <strong>Warning</strong><br />
+When tipping make sure to not use Address Lookup Tables for the tip accounts. Tips do not prioritize transactions for validators that are not Jito-Solana leaders, so tipping in these cases will be ineffective and a waste of money</p>
+</div></blockquote>
+<section id="tip-amount">
+<span id="id18"></span><h3>🪙 Tip Amount<a class="headerlink" href="#tip-amount" title="Link to this heading"></a></h3>
+<section id="id19">
+<h4>sendTransaction<a class="headerlink" href="#id19" title="Link to this heading"></a></h4>
+<p>When using <code class="docutils literal notranslate"><span class="pre">sendTransaction</span></code>, it is recommended to use a 70/30 split between priority fee and jito tip(e.g.):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">Priority</span> <span class="n">Fee</span> <span class="p">(</span><span class="mi">70</span><span class="o">%</span><span class="p">):</span> <span class="mf">0.7</span> <span class="n">SOL</span>
+    <span class="o">+</span>
+    <span class="n">Jito</span> <span class="n">Tip</span> <span class="p">(</span><span class="mi">30</span><span class="o">%</span><span class="p">):</span> <span class="mf">0.3</span> <span class="n">SOL</span>
+    <span class="o">===========================</span>
+    <span class="n">Total</span> <span class="n">Fee</span><span class="p">:</span> <span class="mf">1.0</span> <span class="n">SOL</span>
+</pre></div>
+</div>
+<p>So, when using sendTransaction:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>You would allocate 0.7 SOL as the priority fee.
+And 0.3 SOL as the Jito tip.
+</pre></div>
+</div>
+</section>
+<section id="id20">
+<h4>sendBundle<a class="headerlink" href="#id20" title="Link to this heading"></a></h4>
+<p>When using <code class="docutils literal notranslate"><span class="pre">sendBundle</span></code>, only the Jito tip matters.</p>
+</section>
+</section>
+<section id="get-tip-information">
+<span id="id21"></span><h3>💸 Get Tip Information<a class="headerlink" href="#get-tip-information" title="Link to this heading"></a></h3>
+<section id="rest-api-endpoint-showing-most-recent-tip-amounts">
+<h4>REST API endpoint showing most recent tip amounts:<br><a class="headerlink" href="#rest-api-endpoint-showing-most-recent-tip-amounts" title="Link to this heading"></a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">bundles</span><span class="o">.</span><span class="n">jito</span><span class="o">.</span><span class="n">wtf</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">bundles</span><span class="o">/</span><span class="n">tip_floor</span>
+</pre></div>
+</div>
+<p>Response:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-09-01T12:58:00Z&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;landed_tips_25th_percentile&quot;</span><span class="p">:</span> <span class="mf">6.001000000000001e-06</span><span class="p">,</span>
+    <span class="s2">&quot;landed_tips_50th_percentile&quot;</span><span class="p">:</span> <span class="mf">1e-05</span><span class="p">,</span>
+    <span class="s2">&quot;landed_tips_75th_percentile&quot;</span><span class="p">:</span> <span class="mf">3.6196500000000005e-05</span><span class="p">,</span>
+    <span class="s2">&quot;landed_tips_95th_percentile&quot;</span><span class="p">:</span> <span class="mf">0.0014479055000000002</span><span class="p">,</span>
+    <span class="s2">&quot;landed_tips_99th_percentile&quot;</span><span class="p">:</span> <span class="mf">0.010007999</span><span class="p">,</span>
+    <span class="s2">&quot;ema_landed_tips_50th_percentile&quot;</span><span class="p">:</span> <span class="mf">9.836078125000002e-06</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="websocket-showing-tip-amounts">
+<h4>WebSocket showing tip amounts:<a class="headerlink" href="#websocket-showing-tip-amounts" title="Link to this heading"></a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wscat</span> <span class="o">-</span><span class="n">c</span> <span class="n">wss</span><span class="p">:</span><span class="o">//</span><span class="n">bundles</span><span class="o">.</span><span class="n">jito</span><span class="o">.</span><span class="n">wtf</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">bundles</span><span class="o">/</span><span class="n">tip_stream</span>
+</pre></div>
+</div>
+</section>
+<section id="tip-dashboard">
+<h4>Tip Dashboard<a class="headerlink" href="#tip-dashboard" title="Link to this heading"></a></h4>
+<p>To view dashboard please <a class="reference external" href="https://jito-labs.metabaseapp.com/public/dashboard/016d4d60-e168-4a8f-93c7-4cd5ec6c7c8d">click here</a> .</p>
+</section>
+</section>
+</section>
+<section id="rate-limits">
+<h2>Rate Limits<a class="headerlink" href="#rate-limits" title="Link to this heading"></a></h2>
+<section id="default-limits">
+<h3>Default Limits<a class="headerlink" href="#default-limits" title="Link to this heading"></a></h3>
+<p><strong>Q: What are the defaults?</strong></p>
+<p>1 request per second per IP per region.</p>
+</section>
+<section id="rate-limit-operation">
+<h3>Rate Limit Operation<a class="headerlink" href="#rate-limit-operation" title="Link to this heading"></a></h3>
+<p><strong>Q: How do they work?</strong></p>
+<p>You no longer need an approved auth key for default sends.</p>
+</section>
+<section id="exceeding-limits">
+<h3>Exceeding Limits<a class="headerlink" href="#exceeding-limits" title="Link to this heading"></a></h3>
+<p><strong>Q: What happens if the rate limit is exceeded?</strong></p>
+<p>429 or rate limit error indicating what you hit.</p>
+</section>
+<section id="authorization-issues">
+<h3>Authorization Issues<a class="headerlink" href="#authorization-issues" title="Link to this heading"></a></h3>
+<p><strong>Q: What happens if I see <code class="docutils literal notranslate"><span class="pre">The</span> <span class="pre">supplied</span> <span class="pre">pubkey</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">authorized</span> <span class="pre">to</span> <span class="pre">generate</span> <span class="pre">a</span> <span class="pre">token</span></code>?</strong></p>
+<p>This indicates that you’re either using the auth-key parameter or your keypair variable is being set to check for this key unnecessarily. In most cases, you can simply use Null or None for these fields. Many of the new SDKs will have this built-in by default, so you won’t need to specify it manually.</p>
+</section>
+</section>
+<section id="rate-limits-form">
+<h2>Rate Limits Form<a class="headerlink" href="#rate-limits-form" title="Link to this heading"></a></h2>
+<p>Please ensure to provide valid contact information so we can send you acknowledgment <a class="reference external" href="https://forms.gle/8jZmKX1KZA71jXp38">submit form</a></p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="priority-fee">
+<h3>Priority Fee<a class="headerlink" href="#priority-fee" title="Link to this heading"></a></h3>
+<p><strong>Q: How to know how much to set priority fee?</strong></p>
+<p>Please see <a class="reference internal" href="#tip-amount">Tip Amount for sendTransaction</a></p>
+</section>
+<section id="id22">
+<h3>Tip Amount<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<p><strong>Q: How to know how much to set a tip?</strong></p>
+<p>The minimum tips is 1000 lamports</p>
+</section>
+<section id="bundle-landing">
+<h3>Bundle Landing<a class="headerlink" href="#bundle-landing" title="Link to this heading"></a></h3>
+<p><strong>Q: My bundle/transaction is not landing, how do I check?</strong></p>
+<p>If this is your first time using bundles, please ensure you transaction are valid through <code class="docutils literal notranslate"><span class="pre">simulateTransaction</span></code>, and Jito-Solana RPC should support <code class="docutils literal notranslate"><span class="pre">simulateBundle</span></code> to verify bundles.</p>
+<p>If you have the <code class="docutils literal notranslate"><span class="pre">bundleID</span></code>, you can look over <a class="reference external" href="https://explorer.jito.wtf/">Jito explorer</a>, otherwise you can see basic inflight knowledge <strong>within the last 5 minutes</strong> through <code class="docutils literal notranslate"><span class="pre">getInflightBundleStatuses</span></code>.</p>
+<p>The minimum tip is 1000 lamports, but if you’re targeting a highly competitive MEV opportunity, you’ll need to be strategic with your tip. Consider adjusting your tip amount, based on the <a class="reference internal" href="#get-tip-information">current pricing</a> of tips in the system, and also take into account the latency to each component you’re interacting with to maximize your chances of success.</p>
+</section>
+<section id="failed-transactions">
+<h3>Failed Transactions<a class="headerlink" href="#failed-transactions" title="Link to this heading"></a></h3>
+<p><strong>Q: Why is my transaction/bundle failing, but lands on explorers?</strong></p>
+<section id="uncled-blocks">
+<h4>Uncled Blocks<a class="headerlink" href="#uncled-blocks" title="Link to this heading"></a></h4>
+<p>As more users have been starting to send bundles through Jito’s block engine, we think it would be important to highlight uncled blocks on Solana and why some of you may be seeing your bundles landing as transactions that may fail.</p>
+<p>Solana has skipped slots, this is where a block is built by a leader and not accepted by the supermajority. These are known as uncled blocks. When this happens, any party that received these blocks may rebroadcast any of these transactions and get them landed/reverted on chain. It’s important to note this has always been an issue on Solana and most other blockchains.</p>
+<p>So in the case of bundles, imagine transactions from a bundle end up on an uncled block and some party rebroadcasts some or all of the bundle transactions. Those transactions will hit the normal banking stage which does not respect the bundle atomicity and reversion protection rules.</p>
+</section>
+<section id="mitigations">
+<h4>Mitigations<a class="headerlink" href="#mitigations" title="Link to this heading"></a></h4>
+<p>We’re working through some solutions; however, given the complexity of the network and this problem, it may take some time to fully get there. In the meantime it’s extremely important that:</p>
+<ol class="arabic simple">
+<li><p>You protect yourself from bundles being ‘unbundled’. This means having pre/post account checks and other safeguards that’ll protect you in the case your bundle is rebroadcasted.</p></li>
+<li><p>Make sure you minimize your bundles from being leaked; if you send to Jito you are never going to be explicitly leaked by Jito. However, be aware that during uncled block situations you are exposed to this.</p></li>
+<li><p>Always make sure your Jito tip transaction is in the same transaction that is running the MEV strategy; this way if the transaction fails, you don’t pay the Jito tip:</p>
+<ul class="simple">
+<li><p>Ideally, include your tip instruction in the same transaction as your main logic, along with appropriate post-transaction checks.</p></li>
+<li><p>If space is limited in your main transaction, consider adding assertions in your tipping transaction to verify the expected state (e.g., slot check, balance check).</p></li>
+<li><p>Be aware that sending tips as standalone transactions in bundles may increase exposure to uncle bandit situations.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../" class="btn btn-neutral float-left" title="What is Jito?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../lowlatencytxnfeed/" class="btn btn-neutral float-right" title="➤ Low Latency Block Updates (Shredstream)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jito Labs.
+      <span class="lastupdated">Last updated on Mar 25, 2025.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
